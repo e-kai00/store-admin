@@ -2,9 +2,11 @@ from fastapi import FastAPI, HTTPException
 from sqlalchemy import text
 from sqlalchemy.exc import SQLAlchemyError
 from app.database import engine
+from app.routers.products import router as products_router
 
 
 app = FastAPI(title="Store Admin API")
+app.include_router(products_router)
 
 @app.get("/health")
 def health_check() -> dict[str, str]:

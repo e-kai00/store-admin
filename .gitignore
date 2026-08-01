@@ -1,7 +1,27 @@
+# Environment variables
 .env
+.env.*
+!.env.example
 
-backend/.venv/
-backend/__pycache__/
-backend/app/__pycache__/
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
 
-frontend/node_modules/
+# Angular / Node
+node_modules/
+dist/
+.angular/
+coverage/
+npm-debug.log*
+
+# IDE and operating system
+.vscode/
+.DS_Store
+Thumbs.db

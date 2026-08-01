@@ -1,5 +1,6 @@
 from logging.config import fileConfig
 from alembic import context
+from app import models # noqa: F401
 from app.database import Base, engine
 
 # this is the Alembic Config object, which provides
