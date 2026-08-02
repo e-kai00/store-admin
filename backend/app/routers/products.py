@@ -2,28 +2,27 @@ from typing import Annotated
 from fastapi import APIRouter, HTTPException, Query, status
 from app.dependencies import ProductServiceDependency
 from app.models import Product
-from app.schemas import ProductCreate, ProductRead, ProductUpdate, ProductFilters, ProductListRead
+from app.schemas import (
+    ProductCreate,
+    ProductRead,
+    ProductUpdate,
+    ProductFilters,
+    ProductListRead,
+)
 from app.services.products import ProductAlreadyExistsError, ProductNotFoundError
 
 router = APIRouter(prefix="/products", tags=["products"])
 
 
-@router.get("", response_model=list[ProductRead])
-def get_products(filters: Annotated[ProductFilters, Query()], product_service: ProductServiceDependency) -> ProductListRead:
-    products, total = product_service.get_products(
-        search=filters.search,
-        category=filters.category,
-        status=filters.status,
-        page=filters.page,
-        page_size=filters.page_size
-	)
-
+@router.get("", response_model=ProductListRead)
+def get_products(
+    filters: Annotated[ProductFilters, Query()],
+    product_service: ProductServiceDependency,
+) -> ProductListRead:
+    products, total = product_service.get_products(filters)
     return ProductListRead(
-        items=products,
-        total=total,
-        page=filters.page,
-        page_size=filters.page_size
-	)
+        items=products, total=total, page=filters.page, page_size=filters.page_size
+    )
 
 
 @router.post("", response_model=ProductRead, status_code=status.HTTP_201_CREATED)

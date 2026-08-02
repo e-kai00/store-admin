@@ -1,6 +1,7 @@
 from datetime import datetime
 from decimal import Decimal
 from pydantic import BaseModel, ConfigDict, Field
+from typing import Literal
 
 
 class ProductCreate(BaseModel):
@@ -39,6 +40,68 @@ class ProductFilters(BaseModel):
 
 class ProductListRead(BaseModel):
     items: list[ProductRead]
+    total: int
+    page: int
+    page_size: int
+
+
+OrderStatus = Literal[
+    "pending",
+    "processing",
+    "shipped",
+    "delivered",
+    "cancelled",
+]
+
+
+class OrderItemCreate(BaseModel):
+    product_id: int = Field(gt=0)
+    quantity: int = Field(gt=0)
+
+
+class OrderCreate(BaseModel):
+    customer_name: str = Field(min_length=1, max_length=120)
+    customer_email: str = Field(min_length=3, max_length=255)
+    items: list[OrderItemCreate] = Field(min_length=1)
+
+
+class OrderItemRead(BaseModel):
+    id: int
+    product_id: int | None
+    product_name: str
+    quantity: int
+    unit_price: Decimal
+    line_total: Decimal
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class OrderRead(BaseModel):
+    id: int
+    order_number: str
+    customer_name: str
+    customer_email: str
+    status: OrderStatus
+    total: Decimal
+    created_at: datetime
+    items: list[OrderItemRead]
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class OrderStatusUpdate(BaseModel):
+    status: OrderStatus
+
+
+class OrderFilters(BaseModel):
+    search: str | None = Field(default=None, min_length=1, max_length=100)
+    status: OrderStatus | None = None
+    page: int = Field(default=1, ge=1)
+    page_size: int = Field(default=10, ge=1, le=100)
+
+
+class OrderListRead(BaseModel):
+    items: list[OrderRead]
     total: int
     page: int
     page_size: int

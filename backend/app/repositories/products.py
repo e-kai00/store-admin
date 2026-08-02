@@ -38,7 +38,7 @@ class ProductRepository:
             .limit(limit)
         )
         count_statement = select(func.count()).select_from(Product).where(*filters)
-        products = list(select.db_session.scalars(statement).all())
+        products = list(self.db_session.scalars(statement).all())
         total = self.db_session.scalar(count_statement) or 0
         return products, total
 
@@ -53,7 +53,7 @@ class ProductRepository:
         try:
             self.db_session.add(product)
             self.db_session.commit()
-            self.db_session.refresh()
+            self.db_session.refresh(product)
             return product
         except SQLAlchemyError:
             self.db_session.rollback()

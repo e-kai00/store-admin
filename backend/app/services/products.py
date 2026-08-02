@@ -1,7 +1,7 @@
 from sqlalchemy.exc import IntegrityError
 from app.models import Product
 from app.repositories.products import ProductRepository
-from app.schemas import ProductCreate, ProductUpdate
+from app.schemas import ProductCreate, ProductUpdate, ProductFilters
 
 
 class ProductAlreadyExistsError(Exception):
@@ -16,22 +16,15 @@ class ProductService:
     def __init__(self, repository: ProductRepository):
         self.repository = repository
 
-    def get_products(
-        self,
-        search: str | None,
-        category: str | None,
-        status: str | None,
-        page: int,
-        page_size: int,
-    ) -> tuple[list[Product], int]:
-        offset = (page - 1) * page_size
-        normalize_search = search.strip() if search else None
-        return self.repository(
-            search=normalize_search,
-            category=category,
-            status=status,
+    def get_products(self, filters: ProductFilters) -> tuple[list[Product], int]:
+        offset = (filters.page - 1) * filters.page_size
+        search = filters.search.strip() if filters.search else None
+        return self.repository.get_all(
+            search=search,
+            category=filters.category,
+            status=filters.status,
             offset=offset,
-            limit=page_size
+            limit=filters.page_size,
         )
 
     def create_product(self, product_data: ProductCreate) -> Product:
