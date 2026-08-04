@@ -1,1 +1,167 @@
-<h2>Orders</h2>
+<section class="orders-page">
+  <header>
+    <div>
+      <h2>Orders</h2>
+      <p>Review orders and update their status.</p>
+    </div>
+  </header>
+
+  <div class="filters">
+    <mat-form-field appearance="outline">
+      <mat-label>Search</mat-label>
+
+      <input
+        matInput
+        placeholder="Order number or customer"
+        [value]="search()"
+        (input)="onSearchInput($event)"
+        (keyup.enter)="applyFilters()"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Status</mat-label>
+
+      <mat-select
+        [value]="statusFilter()"
+        (selectionChange)="onStatusFilterChange($event.value)"
+      >
+        <mat-option value="">All statuses</mat-option>
+
+        @for (status of statuses; track status) {
+          <mat-option [value]="status">
+            {{ status }}
+          </mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+
+    <button matButton="filled" (click)="applyFilters()">
+      Apply
+    </button>
+
+    <button matButton (click)="clearFilters()">
+      Clear
+    </button>
+  </div>
+
+  @if (isLoading()) {
+    <div class="state">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else if (errorMsg()) {
+    <div class="state error">
+      <p>{{ errorMsg() }}</p>
+
+      <button matButton (click)="loadOrders()">
+        Try again
+      </button>
+    </div>
+  } @else if (orders().length === 0) {
+    <div class="state">
+      No orders found.
+    </div>
+  } @else {
+    <div class="table-container">
+      <table mat-table [dataSource]="orders()">
+        <ng-container matColumnDef="orderNumber">
+          <th mat-header-cell *matHeaderCellDef>
+            Order
+          </th>
+
+          <td mat-cell *matCellDef="let order">
+            {{ order.order_number }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="customer">
+          <th mat-header-cell *matHeaderCellDef>
+            Customer
+          </th>
+
+          <td mat-cell *matCellDef="let order">
+            <strong>{{ order.customer_name }}</strong>
+            <small>{{ order.customer_email }}</small>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef>
+            Date
+          </th>
+
+          <td mat-cell *matCellDef="let order">
+            {{ order.created_at | date: 'mediumDate' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="items">
+          <th mat-header-cell *matHeaderCellDef>
+            Items
+          </th>
+
+          <td mat-cell *matCellDef="let order">
+            {{ order.items.length }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="total">
+          <th mat-header-cell *matHeaderCellDef>
+            Total
+          </th>
+
+          <td mat-cell *matCellDef="let order">
+            {{ order.total | currency: 'EUR' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>
+            Status
+          </th>
+
+          <td mat-cell *matCellDef="let order">
+            <mat-form-field
+              appearance="outline"
+              class="status-field"
+            >
+              <mat-select
+                [value]="order.status"
+                [disabled]="updatingOrderId() === order.id"
+                (selectionChange)="
+                  updateStatus(order, $event.value)
+                "
+              >
+                @for (status of statuses; track status) {
+                  <mat-option [value]="status">
+                    {{ status }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </td>
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="displayedColumns"
+        ></tr>
+
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+        ></tr>
+      </table>
+    </div>
+  }
+
+  @if (!isLoading() && !errorMsg()) {
+    <mat-paginator
+      [length]="total()"
+      [pageIndex]="page() - 1"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="[5, 10, 20]"
+      (page)="onPageChange($event)"
+    />
+  }
+</section>
