@@ -7,7 +7,7 @@ export interface Product {
   stock_quantity: number;
   status: string;
   description: string | null;
-  created_at: string;
+  createdAt: string;
 }
 
 export interface ProductCreate {
@@ -27,12 +27,12 @@ export interface ProductFilters {
   category?: string;
   status?: string;
   page: number;
-  page_size: number;
+  pageSize: number;
 }
 
 export interface ProductListResponse {
   items: Product[];
   total: number;
   page: number;
-  page_size: number;
+  pageSize: number;
 }
