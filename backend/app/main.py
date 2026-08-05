@@ -4,6 +4,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from app.database import engine
 from app.routers.products import router as products_router
 from app.routers.orders import router as orders_router
+from app.routers.dashboard import router as dashboard_router
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title="Store Admin API")
@@ -18,6 +19,7 @@ app.add_middleware(
 )
 app.include_router(products_router)
 app.include_router(orders_router)
+app.include_router(dashboard_router)
 
 
 @app.get("/health")

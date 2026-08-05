@@ -105,3 +105,21 @@ class OrderListRead(BaseModel):
     total: int
     page: int
     page_size: int
+
+
+class LowStockProductRead(BaseModel):
+    id: int
+    name: str
+    sku: str
+    stock_quantity: int
+    status: str
+
+    model_config = ConfigDict(from_attributes=True)
+
+
+class DashboardSummaryRead(BaseModel):
+    total_orders: int
+    total_revenue: Decimal
+    open_orders: int
+    completed_orders: int
+    low_stock_products: list[LowStockProductRead]
