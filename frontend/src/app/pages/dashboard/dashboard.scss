@@ -1,0 +1,65 @@
+.dashboard-page {
+  display: grid;
+  gap: 1.5rem;
+}
+
+header h2,
+header p,
+.low-stock h3,
+.low-stock p {
+  margin: 0;
+}
+
+header p,
+.low-stock p {
+  margin-top: 0.25rem;
+  color: #666;
+}
+
+.metrics {
+  display: grid;
+  grid-template-columns:
+    repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+}
+
+.metric-card {
+  display: grid;
+  gap: 0.5rem;
+  padding: 1.25rem;
+  border: 1px solid #ddd;
+  border-radius: 0.75rem;
+  background: white;
+}
+
+.metric-card span {
+  color: #666;
+}
+
+.metric-card strong {
+  font-size: 1.75rem;
+}
+
+.low-stock {
+  display: grid;
+  gap: 1rem;
+}
+
+.table-container {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+}
+
+.state,
+.empty-state {
+  display: grid;
+  min-height: 180px;
+  place-items: center;
+}
+
+.error {
+  color: #b3261e;
+}

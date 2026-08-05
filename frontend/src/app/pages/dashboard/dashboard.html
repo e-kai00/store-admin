@@ -1,1 +1,93 @@
-<h2>Dashboard</h2>
+<section class="dashboard-page">
+  <header>
+    <h2>Dashboard</h2>
+    <p>Overview of orders, revenue, and stock.</p>
+  </header>
+
+  @if (isLoading()) {
+    <div class="state">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else if (errorMessage()) {
+    <div class="state error">
+      <p>{{ errorMessage() }}</p>
+
+      <button matButton (click)="loadSummary()">Try again</button>
+    </div>
+  } @else if (summary(); as dashboard) {
+    <div class="metrics">
+      <article class="metric-card">
+        <span>Total orders</span>
+        <strong>{{ dashboard.total_orders }}</strong>
+      </article>
+
+      <article class="metric-card">
+        <span>Total revenue</span>
+        <strong>
+          {{ dashboard.total_revenue | currency: 'EUR' }}
+        </strong>
+      </article>
+
+      <article class="metric-card">
+        <span>Open orders</span>
+        <strong>{{ dashboard.open_orders }}</strong>
+      </article>
+
+      <article class="metric-card">
+        <span>Completed orders</span>
+        <strong>{{ dashboard.completed_orders }}</strong>
+      </article>
+    </div>
+
+    <section class="low-stock">
+      <div>
+        <h3>Low-stock products</h3>
+        <p>Products with five or fewer units.</p>
+      </div>
+
+      @if (dashboard.low_stock_products.length === 0) {
+        <div class="empty-state">No low-stock products.</div>
+      } @else {
+        <div class="table-container">
+          <table mat-table [dataSource]="dashboard.low_stock_products">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Product</th>
+
+              <td mat-cell *matCellDef="let product">
+                {{ product.name }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="sku">
+              <th mat-header-cell *matHeaderCellDef>SKU</th>
+
+              <td mat-cell *matCellDef="let product">
+                {{ product.sku }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="stock">
+              <th mat-header-cell *matHeaderCellDef>Stock</th>
+
+              <td mat-cell *matCellDef="let product">
+                {{ product.stock_quantity }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+
+              <td mat-cell *matCellDef="let product">
+                {{ product.status }}
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+          </table>
+        </div>
+      }
+    </section>
+  }
+</section>
