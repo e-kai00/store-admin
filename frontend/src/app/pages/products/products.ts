@@ -1,5 +1,7 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -20,13 +22,16 @@ import { Product } from '../../models/products';
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
+    MatIconModule,
+    MatMenuModule
+    
   ],
   templateUrl: './products.html',
   styleUrl: './products.scss',
 })
 export class Products implements OnInit {
   private readonly productsService = inject(ProductsService);
-  readonly displayColumns = ['name', 'sku', 'category', 'price', 'stock', 'status'];
+  readonly displayColumns = ['name', 'sku', 'category', 'price', 'stock', 'status', 'actions'];
 
   readonly isLoading = signal(false);
   readonly errorMsg = signal<string | null>(null);

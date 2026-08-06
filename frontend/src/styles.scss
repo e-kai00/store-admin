@@ -36,4 +36,45 @@ body {
   margin: 0;
   height: 100%;
 }
-/* You can add global styles to this file, and also import other style files */
+
+/* Shared list-page styles */
+.app-list-page {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.app-list-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1rem;
+}
+
+.app-list-filters mat-form-field {
+  min-width: 200px;
+}
+
+.app-table-container {
+  overflow-x: auto;
+}
+
+.app-table-container table {
+  width: 100%;
+}
+
+.app-state {
+  display: grid;
+  min-height: 180px;
+  place-items: center;
+}
+
+.app-state--error {
+  color: #b3261e;
+}
+
+.app-actions-header,
+.app-actions-cell {
+  width: 1%;
+  text-align: right;
+  white-space: nowrap;
+}

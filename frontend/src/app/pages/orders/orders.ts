@@ -1,6 +1,8 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatMenuModule } from '@angular/material/menu';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
@@ -24,6 +26,8 @@ import { Order, OrderStatus } from '../../models/order';
     MatProgressSpinnerModule,
     MatSelectModule,
     MatTableModule,
+    MatIconModule,
+    MatMenuModule
   ],
   templateUrl: './orders.html',
   styleUrl: './orders.scss',
@@ -31,7 +35,7 @@ import { Order, OrderStatus } from '../../models/order';
 export class Orders implements OnInit {
   private readonly ordersService = inject(OrdersService);
 
-  readonly displayedColumns = ['orderNumber', 'customer', 'createdAt', 'items', 'total', 'status'];
+  readonly displayedColumns = ['orderNumber', 'customer', 'createdAt', 'items', 'total', 'status', 'actions'];
   readonly statuses: OrderStatus[] = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
 
   readonly isLoading = signal(false);
