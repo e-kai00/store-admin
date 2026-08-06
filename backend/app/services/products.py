@@ -50,7 +50,7 @@ class ProductService:
         update_data = product_data.model_dump(exclude_unset=True)
         new_sku = update_data.get("sku")
         if new_sku is not None and new_sku != product.sku:
-            existing_product = self.repository.get_by_id(new_sku)
+            existing_product = self.repository.get_by_sku(new_sku)
             if existing_product is not None:
                 raise ProductAlreadyExistsError
         # apply only the fields provided in the PATCH request to the existing product.

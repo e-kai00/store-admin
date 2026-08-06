@@ -7,7 +7,7 @@ export interface Product {
   stock_quantity: number;
   status: string;
   description: string | null;
-  createdAt: string;
+  created_at: string;
 }
 
 export interface ProductCreate {

@@ -4,6 +4,8 @@
       <h2>Products</h2>
       <p>Manage the store's product catalogue.</p>
     </div>
+
+    <button matButton="filled" (click)="createProduct()">Create product</button>
   </header>
 
   <!-- FILTERS -->
@@ -102,9 +104,9 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #productActions="matMenu">
-              <button mat-menu-item>Update product</button>
-              <button mat-menu-item>Show details</button>
-              <button mat-menu-item>Delete</button>
+              <button mat-menu-item [routerLink]="['/products', product.id]">Details</button>
+              <button mat-menu-item (click)="updateProduct(product)">Update product</button>
+              <button mat-menu-item (click)="deleteProduct(product)">Delete</button>
             </mat-menu>
           </td>
         </ng-container>

@@ -1,0 +1,52 @@
+<section class="product-detail-page">
+  <a matButton routerLink="/products">Back to products</a>
+
+  @if (isLoading()) {
+    <div class="app-state">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else if (errorMsg()) {
+    <div class="app-state app-state--error">
+      {{ errorMsg() }}
+    </div>
+  } @else if (product(); as product) {
+    <header>
+      <div>
+        <h2>{{ product.name }}</h2>
+        <p>{{ product.sku }}</p>
+      </div>
+    </header>
+
+    <dl class="product-details">
+      <div class="product-details__wide">
+        <dt>Description</dt>
+        <dd>{{ product.description || 'No description' }}</dd>
+      </div>
+
+      <div>
+        <dt>Category</dt>
+        <dd>{{ product.category }}</dd>
+      </div>
+
+      <div>
+        <dt>Price</dt>
+        <dd>{{ product.price | currency: 'EUR' }}</dd>
+      </div>
+
+      <div>
+        <dt>Stock</dt>
+        <dd>{{ product.stock_quantity }}</dd>
+      </div>
+
+      <div>
+        <dt>Status</dt>
+        <dd>{{ product.status }}</dd>
+      </div>
+
+      <div>
+        <dt>Created</dt>
+        <dd>{{ product.created_at | date: 'medium' }}</dd>
+      </div>
+    </dl>
+  }
+</section>

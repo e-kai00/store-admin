@@ -11,6 +11,7 @@ class ProductCreate(BaseModel):
     price: Decimal = Field(gt=0)
     stock_quantity: int = Field(default=0, ge=0)
     status: str = Field(default="active", max_length=50)
+    description: str | None = None
 
 
 class ProductRead(ProductCreate):
@@ -27,7 +28,7 @@ class ProductUpdate(BaseModel):
     price: Decimal | None = Field(default=None, gt=0, max_digits=10, decimal_places=2)
     stock_quantity: int | None = Field(default=None, ge=0)
     status: str | None = Field(default=None, min_length=1, max_length=50)
-    desription: str | None = None
+    description: str | None = None
 
 
 class ProductFilters(BaseModel):
