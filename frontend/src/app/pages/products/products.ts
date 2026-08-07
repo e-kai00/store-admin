@@ -6,7 +6,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatSelectModule } from '@angular/material/select';
+import { MatRadioModule } from '@angular/material/radio';
 import { MatTableModule } from '@angular/material/table';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RouterLink } from '@angular/router';
@@ -23,7 +23,7 @@ import { ProductUpdateDialog } from './product-update-dialog/product-update-dial
     MatInputModule,
     MatPaginatorModule,
     MatProgressSpinnerModule,
-    MatSelectModule,
+    MatRadioModule,
     MatTableModule,
     MatIconModule,
     MatMenuModule,
@@ -115,7 +115,7 @@ export class Products implements OnInit {
   createProduct(): void {
     const dialogRef = this.dialog.open(ProductUpdateDialog, {
       data: null,
-      width: '520px',
+      width: '720px',
     });
     dialogRef.afterClosed().subscribe((productCreate: ProductCreate | undefined) => {
       if (!productCreate) return;

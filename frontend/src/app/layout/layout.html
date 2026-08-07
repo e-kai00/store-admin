@@ -1,13 +1,36 @@
-<header>
-  <h1>Store Admin</h1>
+<div class="app-layout" [class.app-layout--collapsed]="!isSidePanelOpen()">
+  <aside class="side-panel">
+    <div class="header">
+      @if (isSidePanelOpen()) {
+        <h1>Shop Manager</h1>
+      }
+      <button matIconButton type="button" (click)="toggleSidePanel()">
+        <mat-icon>menu</mat-icon>
+      </button>
+    </div>
 
-  <nav>
-    <a routerLink="/dashboard" routerLinkActive="active">Dashboard</a>
-    <a routerLink="/products" routerLinkActive="active">Products</a>
-    <a routerLink="/orders" routerLinkActive="active">Orders</a>
-  </nav>
-</header>
-
-<main>
-  <router-outlet />
-</main>
+    <nav>
+      <a routerLink="/dashboard" routerLinkActive="active" aria-label="Dashboard">
+        <mat-icon>dashboard</mat-icon>
+        @if (isSidePanelOpen()) {
+          <span>Dashboard</span>
+        }
+      </a>
+      <a routerLink="/products" routerLinkActive="active" aria-label="Products">
+        <mat-icon>inventory_2</mat-icon>
+        @if (isSidePanelOpen()) {
+          <span>Products</span>
+        }
+      </a>
+      <a routerLink="/orders" routerLinkActive="active" aria-label="Orders">
+        <mat-icon>receipt_long</mat-icon>
+        @if (isSidePanelOpen()) {
+          <span>Orders</span>
+        }
+      </a>
+    </nav>
+  </aside>
+  <main>
+    <router-outlet />
+  </main>
+</div>

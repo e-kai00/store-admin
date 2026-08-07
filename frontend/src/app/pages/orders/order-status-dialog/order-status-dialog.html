@@ -1,5 +1,5 @@
 <h2 mat-dialog-title>Update status</h2>
-<p>Order Nr. {{order.order_number}}</p>
+<p class="order-number">Order Nr. {{ order.order_number }}</p>
 
 <form [formGroup]="form" (ngSubmit)="save()">
   <mat-dialog-content>

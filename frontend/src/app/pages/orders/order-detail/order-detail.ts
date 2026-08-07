@@ -2,6 +2,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { finalize } from 'rxjs';
@@ -15,6 +16,7 @@ import { N } from '@angular/cdk/keycodes';
     CurrencyPipe,
     DatePipe,
     MatButtonModule,
+    MatIconModule,
     MatProgressSpinnerModule,
     MatTableModule,
     RouterLink,

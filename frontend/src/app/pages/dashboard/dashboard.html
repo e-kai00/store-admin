@@ -5,16 +5,17 @@
   </header>
 
   @if (isLoading()) {
-    <div class="state">
+    <div class="app-state">
       <mat-spinner diameter="40" />
     </div>
   } @else if (errorMessage()) {
-    <div class="state error">
+    <div class="app-state app-state--error">
       <p>{{ errorMessage() }}</p>
 
       <button matButton (click)="loadSummary()">Try again</button>
     </div>
   } @else if (summary(); as dashboard) {
+    <p class="section-header">Stats</p>
     <div class="metrics">
       <article class="metric-card">
         <span>Total orders</span>
@@ -41,14 +42,14 @@
 
     <section class="low-stock">
       <div>
-        <h3>Low-stock products</h3>
+        <p class="section-header">Low-stock products<p>
         <p>Products with five or fewer units.</p>
       </div>
 
       @if (dashboard.low_stock_products.length === 0) {
         <div class="empty-state">No low-stock products.</div>
       } @else {
-        <div class="table-container">
+        <div class="app-table-container">
           <table mat-table [dataSource]="dashboard.low_stock_products">
             <ng-container matColumnDef="name">
               <th mat-header-cell *matHeaderCellDef>Product</th>
@@ -84,7 +85,11 @@
 
             <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
 
-            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; let odd = odd; columns: displayedColumns"
+              [class.app-table-row--odd]="odd"
+            ></tr>
           </table>
         </div>
       }

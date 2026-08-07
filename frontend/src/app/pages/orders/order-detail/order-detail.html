@@ -1,5 +1,8 @@
 <section class="order-detail-page">
-  <a matButton routerLink="/orders">Back to orders</a>
+  <a matButton class="back-to-list-btn" routerLink="/orders">
+    <mat-icon>arrow_back</mat-icon>
+    Back to orders
+  </a>
 
   @if (isLoading()) {
     <div class="app-state">
@@ -13,7 +16,7 @@
     <header>
       <div>
         <h2>{{ order.order_number }}</h2>
-        <p>{{ order.customer_name }} · {{ order.customer_email }}</p>
+        <p>{{ order.customer_name }} {{ order.customer_email }}</p>
       </div>
     </header>
 

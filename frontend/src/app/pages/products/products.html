@@ -2,128 +2,139 @@
   <header>
     <div>
       <h2>Products</h2>
-      <p>Manage the store's product catalogue.</p>
+      <div class="app-list-subheader">
+        <p>Manage the store's product catalogue.</p>
+        <button matButton="filled" (click)="createProduct()">Create product</button>
+      </div>
     </div>
-
-    <button matButton="filled" (click)="createProduct()">Create product</button>
   </header>
 
-  <!-- FILTERS -->
-  <div class="app-list-filters">
-    <mat-form-field appearance="outline">
-      <mat-label>Search</mat-label>
-      <input
-        matInput
-        placeholder="Name or SKU"
-        [value]="search()"
-        (input)="onSearchInput($event)"
-      />
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Category</mat-label>
-      <input matInput [value]="category()" (input)="onCategoryInput($event)" />
-    </mat-form-field>
-
-    <mat-form-field appearance="outline">
-      <mat-label>Status</mat-label>
-      <mat-select [value]="statusFilter()" (selectionChange)="onStatusChange($event.value)">
-        <mat-option value="">All statuses</mat-option>
-        <mat-option value="active">Active</mat-option>
-        <mat-option value="inactive">Inactive</mat-option>
-      </mat-select>
-    </mat-form-field>
-
-    <button matButton="filled" (click)="applyFilters()">Apply</button>
-
-    <button matButton (click)="clearFilters()">Clear</button>
-  </div>
-
   <!-- TABLE -->
-  @if (isLoading()) {
-    <div class="app-state">
-      <mat-spinner diameter="40" />
+  <div class="app-list-content">
+    <div class="app-list-results">
+      @if (isLoading()) {
+        <div class="app-state">
+          <mat-spinner diameter="40" />
+        </div>
+      } @else if (errorMsg()) {
+        <div class="app-state app-state--error">
+          {{ errorMsg() }}
+        </div>
+      } @else if (products().length === 0) {
+        <div class="app-state">No products found.</div>
+      } @else {
+        <div class="app-table-container">
+          <table mat-table [dataSource]="products()">
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let product">
+                {{ product.name }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="sku">
+              <th mat-header-cell *matHeaderCellDef>SKU</th>
+              <td mat-cell *matCellDef="let product">
+                {{ product.sku }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef>Category</th>
+              <td mat-cell *matCellDef="let product">
+                {{ product.category }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef>Price</th>
+              <td mat-cell *matCellDef="let product">€{{ product.price }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="stock">
+              <th mat-header-cell *matHeaderCellDef>Stock</th>
+              <td mat-cell *matCellDef="let product">
+                {{ product.stock_quantity }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="status">
+              <th mat-header-cell *matHeaderCellDef>Status</th>
+              <td mat-cell *matCellDef="let product">
+                {{ product.status }}
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef class="app-actions-header"></th>
+              <td mat-cell *matCellDef="let product" class="app-actions-cell">
+                <button
+                  matIconButton
+                  [matMenuTriggerFor]="productActions"
+                  aria-label="Open product actions"
+                >
+                  <mat-icon>more_vert</mat-icon>
+                </button>
+                <mat-menu #productActions="matMenu">
+                  <button mat-menu-item [routerLink]="['/products', product.id]">Details</button>
+                  <button mat-menu-item (click)="updateProduct(product)">Update product</button>
+                  <button mat-menu-item (click)="deleteProduct(product)">Delete</button>
+                </mat-menu>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
+            <tr
+              mat-row
+              *matRowDef="let row; let odd = odd; columns: displayColumns"
+              [class.app-table-row--odd]="odd"
+            ></tr>
+          </table>
+        </div>
+      }
+
+      @if (!isLoading() && !errorMsg()) {
+        <mat-paginator
+          [length]="total()"
+          [pageIndex]="page() - 1"
+          [pageSize]="pageSize()"
+          [pageSizeOptions]="[5, 10, 20]"
+          (page)="onPageChange($event)"
+        />
+      }
     </div>
-  } @else if (errorMsg()) {
-    <div class="app-state app-state--error">
-      {{ errorMsg() }}
-    </div>
-  } @else if (products().length === 0) {
-    <div class="app-state">No products found.</div>
-  } @else {
-    <div class="app-table-container">
-      <table mat-table [dataSource]="products()">
-        <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>Name</th>
-          <td mat-cell *matCellDef="let product">
-            {{ product.name }}
-          </td>
-        </ng-container>
 
-        <ng-container matColumnDef="sku">
-          <th mat-header-cell *matHeaderCellDef>SKU</th>
-          <td mat-cell *matCellDef="let product">
-            {{ product.sku }}
-          </td>
-        </ng-container>
+    <!-- FILTERS -->
+    <aside class="app-list-filters">
+      <mat-form-field appearance="outline">
+        <mat-label>Search</mat-label>
+        <input
+          matInput
+          placeholder="Name or SKU"
+          [value]="search()"
+          (input)="onSearchInput($event)"
+        />
+      </mat-form-field>
 
-        <ng-container matColumnDef="category">
-          <th mat-header-cell *matHeaderCellDef>Category</th>
-          <td mat-cell *matCellDef="let product">
-            {{ product.category }}
-          </td>
-        </ng-container>
+      <mat-form-field appearance="outline">
+        <mat-label>Category</mat-label>
+        <input matInput [value]="category()" (input)="onCategoryInput($event)" />
+      </mat-form-field>
 
-        <ng-container matColumnDef="price">
-          <th mat-header-cell *matHeaderCellDef>Price</th>
-          <td mat-cell *matCellDef="let product">€{{ product.price }}</td>
-        </ng-container>
+      <div class="app-filter-group">
+        <div class="app-filter-label">Status</div>
 
-        <ng-container matColumnDef="stock">
-          <th mat-header-cell *matHeaderCellDef>Stock</th>
-          <td mat-cell *matCellDef="let product">
-            {{ product.stock_quantity }}
-          </td>
-        </ng-container>
+        <mat-radio-group [value]="statusFilter()" (change)="onStatusChange($event.value)">
+          <mat-radio-button value="">All statuses</mat-radio-button>
+          <mat-radio-button value="active">Active</mat-radio-button>
+          <mat-radio-button value="inactive">Inactive</mat-radio-button>
+        </mat-radio-group>
+      </div>
 
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef>Status</th>
-          <td mat-cell *matCellDef="let product">
-            {{ product.status }}
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="actions">
-          <th mat-header-cell *matHeaderCellDef class="app-actions-header"></th>
-          <td mat-cell *matCellDef="let product" class="app-actions-cell">
-            <button
-              matIconButton
-              [matMenuTriggerFor]="productActions"
-              aria-label="Open product actions"
-            >
-              <mat-icon>more_vert</mat-icon>
-            </button>
-            <mat-menu #productActions="matMenu">
-              <button mat-menu-item [routerLink]="['/products', product.id]">Details</button>
-              <button mat-menu-item (click)="updateProduct(product)">Update product</button>
-              <button mat-menu-item (click)="deleteProduct(product)">Delete</button>
-            </mat-menu>
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayColumns"></tr>
-      </table>
-    </div>
-
-    @if (!isLoading() && !errorMsg()) {
-      <mat-paginator
-        [length]="total()"
-        [pageIndex]="page() - 1"
-        [pageSize]="pageSize()"
-        [pageSizeOptions]="[5, 10, 20]"
-        (page)="onPageChange($event)"
-      />
-    }
-  }
+      <div class="app-filter-actions">
+        <button matButton (click)="clearFilters()">Clear</button>
+        <button matButton="filled" (click)="applyFilters()">Apply</button>
+      </div>
+    </aside>
+  </div>
 </section>

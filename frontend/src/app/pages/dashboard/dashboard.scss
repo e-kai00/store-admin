@@ -3,23 +3,28 @@
   gap: 1.5rem;
 }
 
-header h2,
-header p,
+.dashboard-page header h2,
+.dashboard-page header p,
 .low-stock h3,
+.section-header,
 .low-stock p {
   margin: 0;
 }
 
-header p,
+.dashboard-page header p,
 .low-stock p {
   margin-top: 0.25rem;
-  color: #666;
+  color: #1a1b1f;
+}
+
+.section-header{
+  font-size: 1.3rem;
+  font-weight: 500;  
 }
 
 .metrics {
   display: grid;
-  grid-template-columns:
-    repeat(auto-fit, minmax(180px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
   gap: 1rem;
 }
 
@@ -27,9 +32,9 @@ header p,
   display: grid;
   gap: 0.5rem;
   padding: 1.25rem;
-  border: 1px solid #ddd;
-  border-radius: 0.75rem;
-  background: white;
+  border: 1px solid #d8e7f7;
+  border-radius: 8px;
+  background: #f8fbff;
 }
 
 .metric-card span {
@@ -38,6 +43,7 @@ header p,
 
 .metric-card strong {
   font-size: 1.75rem;
+  font-weight: 600;
 }
 
 .low-stock {
@@ -45,21 +51,9 @@ header p,
   gap: 1rem;
 }
 
-.table-container {
-  overflow-x: auto;
-}
-
-table {
-  width: 100%;
-}
-
-.state,
 .empty-state {
   display: grid;
   min-height: 180px;
   place-items: center;
-}
-
-.error {
-  color: #b3261e;
+  color: #666;
 }

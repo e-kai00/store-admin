@@ -2,6 +2,7 @@ import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { finalize } from 'rxjs';
 import { ProductsService } from '../../../core/services/products';
@@ -9,7 +10,7 @@ import { Product } from '../../../models/products';
 
 @Component({
   selector: 'app-product-detail',
-  imports: [CurrencyPipe, DatePipe, MatButtonModule, MatProgressSpinnerModule, RouterLink],
+  imports: [CurrencyPipe, DatePipe, MatButtonModule, MatIconModule, MatProgressSpinnerModule, RouterLink],
   templateUrl: './product-detail.html',
   styleUrl: './product-detail.scss',
 })

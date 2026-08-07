@@ -1,5 +1,8 @@
 <section class="product-detail-page">
-  <a matButton routerLink="/products">Back to products</a>
+  <a matButton routerLink="/products" class="back-to-list-btn">
+    <mat-icon>arrow_back</mat-icon>
+    Back to products
+  </a>
 
   @if (isLoading()) {
     <div class="app-state">
