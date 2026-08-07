@@ -1,5 +1,6 @@
 import { CurrencyPipe, DatePipe } from '@angular/common';
 import { Component, inject, OnInit, signal } from '@angular/core';
+import { RouterLink } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
@@ -9,10 +10,12 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTableModule } from '@angular/material/table';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { finalize } from 'rxjs';
-
 import { OrdersService } from '../../core/services/orders';
-import { Order, OrderStatus } from '../../models/order';
+import { Order, OrderCreate, OrderStatus } from '../../models/order';
+import { OrderStatusDialog } from './order-status-dialog/order-status-dialog';
+import { OrderCreateDialog } from './order-create-dialog/order-create-dialog';
 
 @Component({
   selector: 'app-orders',
@@ -27,7 +30,9 @@ import { Order, OrderStatus } from '../../models/order';
     MatSelectModule,
     MatTableModule,
     MatIconModule,
-    MatMenuModule
+    MatMenuModule,
+    RouterLink,
+    MatDialogModule,
   ],
   templateUrl: './orders.html',
   styleUrl: './orders.scss',
@@ -35,12 +40,21 @@ import { Order, OrderStatus } from '../../models/order';
 export class Orders implements OnInit {
   private readonly ordersService = inject(OrdersService);
 
-  readonly displayedColumns = ['orderNumber', 'customer', 'createdAt', 'items', 'total', 'status', 'actions'];
+  readonly displayedColumns = [
+    'orderNumber',
+    'customer',
+    'createdAt',
+    'items',
+    'total',
+    'status',
+    'actions',
+  ];
   readonly statuses: OrderStatus[] = ['pending', 'processing', 'shipped', 'delivered', 'cancelled'];
 
   readonly isLoading = signal(false);
   readonly updatingOrderId = signal<number | null>(null);
   readonly errorMsg = signal<string | null>(null);
+  private readonly dialog = inject(MatDialog);
 
   readonly orders = signal<Order[]>([]);
   readonly total = signal(0);
@@ -103,6 +117,23 @@ export class Orders implements OnInit {
     this.loadOrders();
   }
 
+  createOrder(): void {
+    const dialogRef = this.dialog.open(OrderCreateDialog, {
+      width: '720px',
+    });
+    dialogRef.afterClosed().subscribe((orderCreate: OrderCreate | undefined) => {
+      if (!orderCreate) return;
+      this.ordersService.createOrder(orderCreate).subscribe({
+        next: () => {
+          (this.page.set(1), this.loadOrders());
+        },
+        error: () => {
+          this.errorMsg.set('Order could not be created.');
+        },
+      });
+    });
+  }
+
   updateStatus(order: Order, status: OrderStatus): void {
     if (status === order.status) return;
     this.updatingOrderId.set(order.id);
@@ -121,5 +152,16 @@ export class Orders implements OnInit {
           this.errorMsg.set('The order status could not be updated.');
         },
       });
+  }
+
+  openStatusDialog(order: Order): void {
+    const dialogRef = this.dialog.open(OrderStatusDialog, {
+      data: order,
+      width: '420px',
+    });
+    dialogRef.afterClosed().subscribe((result: { status: OrderStatus } | undefined) => {
+      if (!result) return;
+      this.updateStatus(order, result.status);
+    });
   }
 }

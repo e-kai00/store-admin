@@ -1,0 +1,68 @@
+<section class="order-detail-page">
+  <a matButton routerLink="/orders">Back to orders</a>
+
+  @if (isLoading()) {
+    <div class="app-state">
+      <mat-spinner diameter="40" />
+    </div>
+  } @else if (errorMsg()) {
+    <div class="app-state app-state--error">
+      {{ errorMsg() }}
+    </div>
+  } @else if (order(); as order) {
+    <header>
+      <div>
+        <h2>{{ order.order_number }}</h2>
+        <p>{{ order.customer_name }} · {{ order.customer_email }}</p>
+      </div>
+    </header>
+
+    <dl class="order-summary">
+      <div>
+        <dt>Status</dt>
+        <dd>{{ order.status }}</dd>
+      </div>
+
+      <div>
+        <dt>Total</dt>
+        <dd>{{ order.total | currency: 'EUR' }}</dd>
+      </div>
+
+      <div>
+        <dt>Created</dt>
+        <dd>{{ order.created_at | date: 'medium' }}</dd>
+      </div>
+    </dl>
+
+    <div class="app-table-container">
+      <table mat-table [dataSource]="order.items">
+        <ng-container matColumnDef="product">
+          <th mat-header-cell *matHeaderCellDef>Product</th>
+          <td mat-cell *matCellDef="let item">{{ item.product_name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="quantity">
+          <th mat-header-cell *matHeaderCellDef>Quantity</th>
+          <td mat-cell *matCellDef="let item">{{ item.quantity }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="unitPrice">
+          <th mat-header-cell *matHeaderCellDef>Unit price</th>
+          <td mat-cell *matCellDef="let item">
+            {{ item.unit_price | currency: 'EUR' }}
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="lineTotal">
+          <th mat-header-cell *matHeaderCellDef>Line total</th>
+          <td mat-cell *matCellDef="let item">
+            {{ item.line_total | currency: 'EUR' }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+  }
+</section>

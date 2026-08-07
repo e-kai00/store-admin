@@ -4,6 +4,7 @@
       <h2>Orders</h2>
       <p>Review orders and update their status.</p>
     </div>
+    <button matButton="filled" (click)="createOrder()">Create order</button>
   </header>
 
   <!-- FILTERS -->
@@ -100,19 +101,7 @@
           <th mat-header-cell *matHeaderCellDef>Status</th>
 
           <td mat-cell *matCellDef="let order">
-            <mat-form-field appearance="outline" class="status-field">
-              <mat-select
-                [value]="order.status"
-                [disabled]="updatingOrderId() === order.id"
-                (selectionChange)="updateStatus(order, $event.value)"
-              >
-                @for (status of statuses; track status) {
-                  <mat-option [value]="status">
-                    {{ status }}
-                  </mat-option>
-                }
-              </mat-select>
-            </mat-form-field>
+            {{ order.status }}
           </td>
         </ng-container>
 
@@ -127,8 +116,8 @@
               <mat-icon>more_vert</mat-icon>
             </button>
             <mat-menu #orderActions="matMenu">
-              <button mat-menu-item>Show order details</button>
-              <button mat-menu-item>Update status</button>
+              <button mat-menu-item [routerLink]="['/orders', order.id]">Details</button>
+              <button mat-menu-item (click)="openStatusDialog(order)">Update status</button>
             </mat-menu>
           </td>
         </ng-container>

@@ -1,0 +1,66 @@
+<h2 mat-dialog-title>Create order</h2>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+  <mat-dialog-content>
+    <mat-form-field appearance="outline">
+      <mat-label>Customer name</mat-label>
+      <input matInput formControlName="customer_name" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline">
+      <mat-label>Customer email</mat-label>
+      <input matInput type="email" formControlName="customer_email" />
+    </mat-form-field>
+
+    @if (isLoading()) {
+      <div class="app-state">
+        <mat-spinner diameter="32" />
+      </div>
+    } @else if (productErrorMsg()) {
+      <div class="app-state app-state--error">
+        {{ productErrorMsg() }}
+      </div>
+    } @else {
+      <div formArrayName="items" class="order-items">
+        @for (item of items.controls; track $index; let index = $index) {
+          <div [formGroupName]="index" class="order-item-row">
+            <mat-form-field appearance="outline">
+              <mat-label>Product</mat-label>
+              <mat-select formControlName="product_id">
+                @for (product of products(); track product.id) {
+                  <mat-option [value]="product.id">
+                    {{ product.name }} - {{ product.sku }}
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline">
+              <mat-label>Quantity</mat-label>
+              <input matInput type="number" formControlName="quantity" />
+            </mat-form-field>
+
+            <button
+              matIconButton
+              type="button"
+              aria-label="Remove item"
+              [disabled]="items.length === 1"
+              (click)="removeItem(index)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+        }
+      </div>
+
+      <button matButton type="button" (click)="addItem()">
+        Add item
+      </button>
+    }
+  </mat-dialog-content>
+
+  <mat-dialog-actions align="end">
+    <button matButton type="button" (click)="cancel()">Cancel</button>
+    <button matButton="filled" type="submit">Create</button>
+  </mat-dialog-actions>
+</form>

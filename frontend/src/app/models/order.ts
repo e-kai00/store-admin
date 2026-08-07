@@ -7,32 +7,32 @@ export type OrderStatus =
 
 export interface OrderItem {
   id: number;
-  productId: number | null;
-  productName: string;
+  product_id: number | null;
+  product_name: string;
   quantity: number;
-  unitPrice: string;
-  lineTotal: string;
+  unit_price: string;
+  line_total: string;
 }
 
 export interface Order {
   id: number;
-  orderNumber: string;
-  customerName: string;
-  customerEmail: string;
+  order_number: string;
+  customer_name: string;
+  customer_email: string;
   status: OrderStatus;
   total: string;
-  createdAt: string;
+  created_at: string;
   items: OrderItem[];
 }
 
 export interface OrderItemCreate {
-  productId: number;
+  product_id: number;
   quantity: number;
 }
 
 export interface OrderCreate {
-  customerName: string;
-  customerEmail: string;
+  customer_name: string;
+  customer_email: string;
   items: OrderItemCreate[];
 }
 

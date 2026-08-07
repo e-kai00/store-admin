@@ -1,0 +1,38 @@
+.order-detail-page {
+  display: grid;
+  gap: 1.5rem;
+}
+
+.order-detail-page header h2,
+.order-detail-page header p {
+  margin: 0;
+}
+
+.order-detail-page header p {
+  margin-top: 0.25rem;
+  color: #666;
+}
+
+.order-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin: 0;
+}
+
+.order-summary div {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+}
+
+.order-summary dt {
+  margin-bottom: 0.35rem;
+  color: #666;
+  font-size: 0.85rem;
+}
+
+.order-summary dd {
+  margin: 0;
+  font-weight: 500;
+}

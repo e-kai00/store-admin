@@ -1,0 +1,20 @@
+mat-dialog-content {
+  display: grid;
+  gap: 1rem;
+}
+
+mat-form-field {
+  width: 100%;
+}
+
+.order-items {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.order-item-row {
+  display: grid;
+  grid-template-columns: minmax(220px, 1fr) 120px auto;
+  align-items: center;
+  gap: 0.75rem;
+}
