@@ -12,7 +12,7 @@ import {
 @Service()
 export class OrdersService {
   private readonly http = inject(HttpClient);
-  private readonly apiUrl = 'http://localhost:8000/orders';
+  private readonly apiUrl = '/api/orders';
 
   getOrders(filters: OrderFilters): Observable<OrderListResponse> {
     let params = new HttpParams()

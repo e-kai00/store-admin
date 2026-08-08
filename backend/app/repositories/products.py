@@ -33,7 +33,7 @@ class ProductRepository:
         statement = (
             select(Product)
             .where(*filters)
-            .order_by(Product.id)
+            .order_by(Product.id.desc())
             .offset(offset)
             .limit(limit)
         )
