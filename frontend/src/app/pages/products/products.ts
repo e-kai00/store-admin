@@ -82,8 +82,7 @@ export class Products implements OnInit {
     const input = event.target as HTMLInputElement;
     this.search.set(input.value);
   }
-
-  // TODO: change for selector; use enums
+  
   onCategoryInput(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.category.set(input.value);

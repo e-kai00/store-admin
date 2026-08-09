@@ -28,7 +28,7 @@ def health_check() -> dict[str, str]:
 
 
 @app.get("/health/database")
-def database_health_chekc() -> dict[str, str]:
+def database_health_check() -> dict[str, str]:
     try:
         with engine.connect() as connection:
             connection.execute(text("SELECT 1"))

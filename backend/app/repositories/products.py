@@ -65,7 +65,7 @@ class ProductRepository:
             self.db_session.refresh(product)
             return product
         except SQLAlchemyError:
-            self.db_sesson.rollback()
+            self.db_session.rollback()
             raise
 
     def delete(self, product: Product) -> None:

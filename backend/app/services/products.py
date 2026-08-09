@@ -28,8 +28,8 @@ class ProductService:
         )
 
     def create_product(self, product_data: ProductCreate) -> Product:
-        exisitng_product = self.repository.get_by_sku(product_data.sku)
-        if exisitng_product is not None:
+        existing_product = self.repository.get_by_sku(product_data.sku)
+        if existing_product is not None:
             raise ProductAlreadyExistsError
         product = Product(**product_data.model_dump())
         try:
