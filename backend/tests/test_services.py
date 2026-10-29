@@ -4,33 +4,53 @@ import pytest
 from app.models import Product
 from app.repositories.orders import OrderRepository
 from app.repositories.products import ProductRepository
-from app.schemas import OrderCreate
+from app.schemas import OrderCreate, ProductCreate, ProductUpdate
 from app.services.orders import OrderService, InvalidOrderError
+from app.services.products import ProductService, ProductAlreadyExistsError
 
 
-def test_create_order_calculates_total():
-    product_repository = Mock(spec=ProductRepository)
-    order_repository = Mock(spec=OrderRepository)
+@pytest.fixture
+def product_repository():
+    return Mock(spec=ProductRepository)
 
+
+@pytest.fixture
+def order_repository():
+    repository = Mock(spec=OrderRepository)
+    repository.add.side_effect = lambda order: order
+    return repository
+
+
+@pytest.fixture
+def service(order_repository, product_repository):
+    return OrderService(
+        order_repository,
+        product_repository,
+    )
+
+
+@pytest.fixture
+def product_service(product_repository):
+    return ProductService(product_repository)
+
+
+def make_order(items):
+    return OrderCreate(
+        customer_name="Anna", customer_email="anna@example.com", items=items
+    )
+
+
+def test_create_order_calculates_total(service, product_repository, order_repository):
     product = {
         1: Product(id=1, name="Notebook", price=Decimal("12.53")),
         2: Product(id=2, name="Pencil", price=Decimal("0.10")),
     }
-
     product_repository.get_by_id.side_effect = product.get
-    order_repository.add.side_effect = lambda order: order
-
-    service = OrderService(
-        order_repository,
-        product_repository,
-    )
-    payload = OrderCreate(
-        customer_name="Anna",
-        customer_email="anna@example.com",
-        items=[
+    payload = make_order(
+        [
             {"product_id": 1, "quantity": 2},
             {"product_id": 2, "quantity": 3},
-        ],
+        ]
     )
     order = service.create_order(payload)
 
@@ -42,62 +62,33 @@ def test_create_order_calculates_total():
     order_repository.add.assert_called_once_with(order)
 
 
-def test_new_order_has_pending_status():
-    product_repository = Mock(spec=ProductRepository)
-    order_repository = Mock(spec=OrderRepository)
-
+def test_new_order_has_pending_status(service, product_repository):
     product_repository.get_by_id.return_value = Product(
         id=1,
         name="Notebook",
         price=Decimal("10.00"),
     )
-
-    order_repository.add.side_effect = lambda order: order
-
-    service = OrderService(
-        order_repository,
-        product_repository,
+    payload = make_order(
+        [
+            {"product_id": 1, "quantity": 1},
+        ]
     )
-
-    payload = OrderCreate(
-        customer_name="Anna",
-        customer_email="anna@example.com",
-        items=[
-            {
-                "product_id": 1,
-                "quantity": 1,
-            }
-        ],
-    )
-
     order = service.create_order(payload)
     assert order.status == "pending"
 
 
-def test_order_item_copies_product_snapshot():
-    product_repository = Mock(spec=ProductRepository)
-    order_repository = Mock(spec=OrderRepository)
-
+def test_order_item_copies_product_snapshot(
+    service, product_repository, order_repository
+):
     product = Product(
         id=1,
         name="Notebook",
         price=Decimal("12.53"),
     )
-
     product_repository.get_by_id.return_value = product
-    order_repository.add.side_effect = lambda order: order
-
-    service = OrderService(
-        order_repository,
-        product_repository,
+    payload = make_order(
+        [{"product_id": 1, "quantity": 2}],
     )
-
-    payload = OrderCreate(
-        customer_name="Anna",
-        customer_email="anna@example.com",
-        items=[{"product_id": 1, "quantity": 2}],
-    )
-
     order = service.create_order(payload)
     item = order.items[0]
 
@@ -107,18 +98,9 @@ def test_order_item_copies_product_snapshot():
     assert item.quantity == 2
 
 
-def test_create_order_rejects_duplicate_products():
-    product_repository = Mock(spec=ProductRepository)
-    order_repository = Mock(spec=OrderRepository)
-
-    service = OrderService(
-        order_repository,
-        product_repository,
-    )
-    payload = OrderCreate(
-        customer_name="Anna",
-        customer_email="anna@example.com",
-        items=[
+def test_create_order_rejects_duplicate_products(service, order_repository):
+    payload = make_order(
+        [
             {
                 "product_id": 1,
                 "quantity": 1,
@@ -131,25 +113,15 @@ def test_create_order_rejects_duplicate_products():
     )
     with pytest.raises(InvalidOrderError):
         service.create_order(payload)
-
     order_repository.add.assert_not_called()
 
 
-def test_create_order_rejects_missing_product():
-    product_repository = Mock(spec=ProductRepository)
-    order_repository = Mock(spec=OrderRepository)
-
+def test_create_order_rejects_missing_product(
+    service, product_repository, order_repository
+):
     product_repository.get_by_id.return_value = None
-
-    service = OrderService(
-        order_repository,
-        product_repository,
-    )
-
-    payload = OrderCreate(
-        customer_name="Anna",
-        customer_email="anna@example.com",
-        items=[
+    payload = make_order(
+        [
             {
                 "product_id": 999,
                 "quantity": 1,
@@ -161,3 +133,49 @@ def test_create_order_rejects_missing_product():
         service.create_order(payload)
 
     order_repository.add.assert_not_called()
+
+
+def test_update_product_preserves_omitted_fields(product_service, product_repository):
+    existing_product = Product(
+        id=1,
+        name="Notebook",
+        sku="NOTE-001",
+        category="Stationery",
+        price=Decimal("12.50"),
+        stock_quantity=20,
+        status="active",
+        description="Original description",
+    )
+    product_repository.get_by_id.return_value = existing_product
+    product_repository.save.side_effect = lambda product: product
+    payload = ProductUpdate(name="Updated Notebook")
+    updated_product = product_service.update_product(existing_product.id, payload)
+
+    product_repository.save.assert_called_once_with(existing_product)
+    assert updated_product.name == "Updated Notebook"
+    assert updated_product.sku == "NOTE-001"
+    assert updated_product.category == "Stationery"
+    assert updated_product.price == Decimal("12.50")
+    assert updated_product.stock_quantity == 20
+    assert updated_product.description == "Original description"
+
+
+def test_create_product_rejects_duplicate_sku(product_service, product_repository):
+    existing_product = Product(
+        id=1,
+        name="Notebook",
+        sku="NOTE-001",
+        category="Stationery",
+        price=Decimal("12.50"),
+        stock_quantity=20,
+    )
+    product_repository.get_by_sku.return_value = existing_product
+    payload = ProductCreate(
+        name="Another Notebook",
+        sku="NOTE-001",
+        category="Stationery",
+        price=Decimal("15.00"),
+    )
+    with pytest.raises(ProductAlreadyExistsError):
+        product_service.update_product(existing_product.id, payload)
+    product_repository.add.assert_not_called()
